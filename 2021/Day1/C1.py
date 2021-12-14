@@ -1,4 +1,5 @@
-
+import pandas as pd
+import numpy as np
 def simple():
     increased_count=0
     with open("input.txt") as depth_readings: 
@@ -11,5 +12,11 @@ def simple():
             previousMeasurement=currentMeasurement
     return increased_count
 
+def complex():
+    df = pd.read_csv('input.txt', delimiter="\n",names=["depths"])
+    diffs=np.ediff1d(df['depths'].values, to_begin=0)
+    return (0<diffs).sum()
+
 if __name__ == '__main__':
     print(simple())
+    print(complex())
