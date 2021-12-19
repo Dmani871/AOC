@@ -1,7 +1,7 @@
 from collections import defaultdict,Counter
 
 
-def remove_dead_ends(start, connection_map, visited_small_caves):
+def find_paths(start, connection_map, visited_small_caves):
     if start == 'end':
         return 1
     paths = 0
@@ -11,7 +11,7 @@ def remove_dead_ends(start, connection_map, visited_small_caves):
     for cave in connection_map[start]:
         small_caves_count = Counter(visited_small_caves)
         if (cave.islower() and (cave not in visited_small_caves or max(small_caves_count.values())<2)) or cave.isupper():
-            paths += remove_dead_ends(cave, connection_map, visited_small_caves)
+            paths += find_paths(cave, connection_map, visited_small_caves)
         visited_small_caves=visited_small_caves[:start_length]
     return paths
 
@@ -26,7 +26,7 @@ def main():
             if cave1 != "start":
                 connection_map[cave2].append(cave1)
         del connection_map['end']
-        return remove_dead_ends('start', connection_map, [])
+        return find_paths('start', connection_map, [])
 
 
 if __name__ == '__main__':
