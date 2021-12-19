@@ -1,5 +1,21 @@
 import re
 
+def display_code(cords):
+    WIDTH=3
+    sorted_cords = sorted(cords)
+    for index in range(len(sorted_cords)):
+        if index > 0:
+            if sorted_cords[index][0] != sorted_cords[index - 1][0]:
+                print("")
+            else:
+                prev_x_diff = sorted_cords[index][1] - sorted_cords[index - 1][1]
+                print('.' * (prev_x_diff - 1) * WIDTH, end='')
+                print("#" * WIDTH, end='')
+        else:
+            print("#", end='')
+
+
+
 def main():
     instructions = []
     cords = set()
@@ -29,18 +45,9 @@ def main():
                 old_cords.add(cord)
         cords=cords-old_cords
         cords.update(new_cords)
+    display_code(cords)
 
-    sorted_cords=sorted(cords)
 
-    for index in range(len(sorted_cords)):
-        if index>0:
-            if sorted_cords[index][0] != sorted_cords[index-1][0]:
-                print("")
-            else:
-                prev_x_diff=sorted_cords[index][1]-sorted_cords[index-1][1]
-
-                print('.'*(prev_x_diff-1)*3, end='')
-                print("#"*3,end='')
 
 
 if __name__ == '__main__':
