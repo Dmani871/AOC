@@ -1,16 +1,17 @@
 import re
 import math
-from collections import defaultdict
+from collections import defaultdict,deque
+import bisect
 
 
-# TODO:Refactor
+# TODO:Refactor too slow 1 min
 def get_neighbors(cords):
     x, y = cords
     adjacent_cords = set()
     for index_add in [1, -1]:
         adjacent_cords.add((x + index_add, y))
         adjacent_cords.add((x, y + index_add))
-    return adjacent_cords
+    return set(adjacent_cords)
 
 
 def main():
@@ -47,25 +48,34 @@ def main():
             graph[x, y + mapping][0] = round((graph[x, y + mapping][0] + y_index )% 9.1)
             y_index += 1
         MAX_Y=y + mapping
-    priority_q=defaultdict(list)
-    priority_q[math.inf].extend(graph.keys())
+    priority_q=defaultdict(set)
+    priority_q[math.inf].update(graph.keys())
     priority_q[math.inf].remove((0,0))
-    priority_q[0].append((0,0))
+    priority_q[0].add((0,0))
     graph[0, 0][1] = 0
-    while priority_q:
-        for key in sorted(priority_q):
-            for cord in priority_q[key]:
-                current_node_val = graph[cord][1]
-                for neighbor in get_neighbors(cord):
+    priority_q_keys=list(priority_q.keys())
+    visited=set()
+    while priority_q_keys:
+        key=min(priority_q_keys)
+        priority_q_keys.remove(key)
+        for cord in priority_q[key]:
+            current_node_val = graph[cord][1]
+            for neighbor in get_neighbors(cord):
+                if neighbor not in visited:
+
                     try:
+                        prev_cost=graph[neighbor][1]
                         cost = current_node_val + graph[neighbor][0]
                         if cost < graph[neighbor][1]:
                             graph[neighbor][1] = cost
                             graph[neighbor][2] = cord
-                            priority_q[cost].append(neighbor)
+                            priority_q[cost].add(neighbor)
+                            priority_q[prev_cost].remove(neighbor)
+                            priority_q_keys.append(cost)
+                            #bisect.insort(priority_q_keys, cost)
                     except KeyError:
                         pass
-            del priority_q[key]
+            visited.add(cord)
     return graph[MAX_X,MAX_Y][1]
 
 
